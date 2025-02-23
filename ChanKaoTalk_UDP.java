@@ -10,7 +10,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public class ChanKaoTalk_UDP extends Frame implements KeyListener {
+public class ChanKaoTalk_UDP extends Frame {
     Panel panel;
     Label isReady;
     Button Connect;
@@ -20,7 +20,7 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
     TextArea send_message;
 
     InetAddress group;
-    String multicastAddress = "230.0.0.5";
+    String multicastAddress = "230.0.0.1";
     int port = 9000;
     MulticastSocket socket;
 
@@ -63,7 +63,19 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
         add(talk_list);
         add(send_message);
 
-        send_message.addKeyListener(this);
+        send_message.addKeyListener(new KeyListener() {
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                if(ke.getKeyCode() == KeyEvent.VK_ENTER){
+                    sendMessage();
+                    ke.consume();
+                }
+            }
+            @Override
+            public void keyReleased(KeyEvent ke) {}
+            @Override
+            public void keyTyped(KeyEvent ke) {}
+        });
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -105,11 +117,11 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
     }
 
     public void sendMessage(){
-        String message = send_message.getText();
+        String message = send_message.getText().trim();
         if(!message.isEmpty() && socket != null && !socket.isClosed()){
             try{
-                message = username + " : " + message;
-                byte[] bytes = message.getBytes();
+                String formattedMessage = username + " : " + message;
+                byte[] bytes = formattedMessage.getBytes();
                 DatagramPacket packet = new DatagramPacket(bytes, bytes.length, group, port);
                 socket.send(packet);
                 talk_list.append("Me : " + message + "\n");
@@ -132,13 +144,6 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
         }
     }
 
-    public void keyPressed(KeyEvent ke){
-        if(ke.getKeyCode() == KeyEvent.VK_ENTER){
-            sendMessage();
-        }
-    }
-    public void keyReleased(KeyEvent ke){}
-    public void keyTyped(KeyEvent ke){}
     public static void main(String[] args){
         Frame frame = new ChanKaoTalk_UDP();
     }
