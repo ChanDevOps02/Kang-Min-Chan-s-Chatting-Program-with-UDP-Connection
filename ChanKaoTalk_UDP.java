@@ -20,7 +20,7 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
     TextArea send_message;
 
     InetAddress group;
-    String multicastAddress = "230.0.0.1";
+    String multicastAddress = "230.0.0.5";
     int port = 9000;
     MulticastSocket socket;
 
@@ -63,7 +63,7 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
         add(talk_list);
         add(send_message);
 
-        this.addKeyListener(this);
+        send_message.addKeyListener(this);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -112,7 +112,7 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
                 byte[] bytes = message.getBytes();
                 DatagramPacket packet = new DatagramPacket(bytes, bytes.length, group, port);
                 socket.send(packet);
-                talk_list.append(message + "\n");
+                talk_list.append("Me : " + message + "\n");
                 send_message.setText("");
             }catch(IOException ie){
                 ie.printStackTrace();
