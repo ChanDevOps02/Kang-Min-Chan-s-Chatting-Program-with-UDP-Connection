@@ -24,6 +24,8 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
     int port = 9000; //멀티캐스트 포트
     MulticastSocket socket; //멀티캐스트 소켓
 
+    String username = "User" + (int)(Math.random() * 1000); // 각 사용자의 고유 이름 지정
+
     public ChanKaoTalk_UDP(){
         setTitle("Multicast chat program");
         setSize(800,800);
@@ -93,7 +95,9 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 socket.receive(packet);
                 String message = new String (packet.getData(), 0, packet.getLength());
-                talk_list.append("Other : " + message + "\n");
+                if (!message.startsWith(username + " : ")) {
+                    talk_list.append(message + "\n");
+                }
             }catch(IOException ie){
                 ie.printStackTrace();
             }
@@ -104,6 +108,7 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
         String message = send_message.getText();
         if(!message.isEmpty() && socket != null && !socket.isClosed()){
             try{
+                message = username + " : " + message;
                 byte[] bytes = message.getBytes();
                 DatagramPacket packet = new DatagramPacket(bytes, bytes.length, group, port);
                 socket.send(packet);
