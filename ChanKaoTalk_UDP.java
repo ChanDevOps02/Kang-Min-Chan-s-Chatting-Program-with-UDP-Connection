@@ -11,20 +11,20 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 public class ChanKaoTalk_UDP extends Frame implements KeyListener {
-    Panel panel; //최상단 라벨과 버튼들을 배치할 판넬
-    Label isReady; //멀티캐스트 그룹과의 연결상태를 표시하는 라벨 (True -> Status : Connected successfully! / False -> Status : Disconnected..)
-    Button Connect; //멀티캐스트 그룹에 해당기기를 연결시키는 기능
-    Button Send; //멀티캐스트 그룹에 포함되어 있는 기기들에게 메세지를 뿌리는 기능
-    Button exit; //해당 멀티캐스트 그룹에서 나가는 기능
-    TextArea talk_list; //멀티캐스트 그룹에 포함되어 있는 기기들이 송수신한 메세지를 나열
-    TextArea send_message;//내가 보낼 메세지를 하단에 표시
+    Panel panel;
+    Label isReady;
+    Button Connect;
+    Button Send;
+    Button exit;
+    TextArea talk_list;
+    TextArea send_message;
 
     InetAddress group;
-    String multicastAddress = "230.0.0.0";
-    int port = 9000; //멀티캐스트 포트
-    MulticastSocket socket; //멀티캐스트 소켓
+    String multicastAddress = "230.0.0.1";
+    int port = 9000;
+    MulticastSocket socket;
 
-    String username = "User" + (int)(Math.random() * 1000); // 각 사용자의 고유 이름 지정
+    String username = "User" + (int)(Math.random() * 1000);
 
     public ChanKaoTalk_UDP(){
         setTitle("Multicast chat program");
@@ -112,7 +112,7 @@ public class ChanKaoTalk_UDP extends Frame implements KeyListener {
                 byte[] bytes = message.getBytes();
                 DatagramPacket packet = new DatagramPacket(bytes, bytes.length, group, port);
                 socket.send(packet);
-                talk_list.append("Me : " + message + "\n");
+                talk_list.append(message + "\n");
                 send_message.setText("");
             }catch(IOException ie){
                 ie.printStackTrace();
